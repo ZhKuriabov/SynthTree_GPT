@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="synth_tree",
-    version="0.1.0",
+    version="0.1.1",
     description="Interpretable tree-based model SynthTree for local surrogate modeling",
     author="Evgenii Kuriabov",
     author_email="evgenii@example.com",
