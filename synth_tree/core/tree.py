@@ -5,6 +5,7 @@ import numpy as np
 from itertools import combinations
 from tqdm import tqdm
 from joblib import Parallel, delayed
+import graphviz as gp
 
 class SynthTree:
     def __init__(self, task='regression', max_depth=None, min_samples_split=10, pruning_method=None, pruning_max_depth=3):
@@ -91,6 +92,26 @@ class SynthTree:
 
     def predict(self, X, proba=False):
         return np.array([self.root.predict(x, proba=proba) for x in X])
+
+    def visualize_graphviz(self, feature_names=None):
+        dot = gp.Digraph()
+    
+        def _add_nodes_edges(node, parent=None, label=""):
+            if node.is_leaf:
+                name = f"Leaf_{id(node)}"
+                dot.node(name, label="Leaf")
+            else:
+                name = f"Node_{id(node)}"
+                fname = feature_names[node.split_feature] if feature_names else f"x{node.split_feature}"
+                dot.node(name, label=f"{fname} <= {node.split_value:.2f}")
+                _add_nodes_edges(node.left, name, "True")
+                _add_nodes_edges(node.right, name, "False")
+    
+            if parent:
+                dot.edge(parent, name, label=label)
+    
+        _add_nodes_edges(self.root)
+        return dot
 
     def visualize(self, feature_names=None):
         def _print(node, depth, prefix=""):
