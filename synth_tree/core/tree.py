@@ -93,13 +93,25 @@ class SynthTree:
     def predict(self, X, proba=False):
         return np.array([self.root.predict(x, proba=proba) for x in X])
 
-    def visualize_graphviz(self, feature_names=None):
+    def visualize_graphviz(self, feature_names=None, leaf_sizes_test=None):
         dot = gp.Digraph()
+    
+        # определить максимальный размер (для нормализации)
+        max_size = max(leaf_sizes_test.values()) if leaf_sizes_test else 1
     
         def _add_nodes_edges(node, parent=None, label=""):
             if node.is_leaf:
                 name = f"Leaf_{id(node)}"
-                dot.node(name, label="Leaf")
+                base_label = f"Leaf {getattr(node, 'leaf_id', '?')}"
+                if leaf_sizes_test and hasattr(node, "leaf_id"):
+                    size = leaf_sizes_test.get(node.leaf_id, 0)
+                    intensity = size / max_size
+                    green = int(255 * intensity)
+                    color = f"#{0:02x}{green:02x}{0:02x}"
+                    label_full = f"{base_label}\nsize={size}"
+                    dot.node(name, label=label_full, style="filled", fillcolor=color)
+                else:
+                    dot.node(name, label=base_label)
             else:
                 name = f"Node_{id(node)}"
                 fname = feature_names[node.split_feature] if feature_names else f"x{node.split_feature}"
