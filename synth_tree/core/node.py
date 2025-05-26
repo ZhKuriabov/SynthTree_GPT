@@ -32,4 +32,19 @@ class Node:
             return 1
         return self.left.count_leaves() + self.right.count_leaves()
 
+    def assign_leaf_ids(self, counter):
+        if self.is_leaf:
+            self.leaf_id = counter[0]
+            counter[0] += 1
+        else:
+            self.left.assign_leaf_ids(counter)
+            self.right.assign_leaf_ids(counter)
+
+    def get_leaf_id(self, x):
+        if self.is_leaf:
+            return self.leaf_id
+        if x[self.split_feature] <= self.split_value:
+            return self.left.get_leaf_id(x)
+        else:
+            return self.right.get_leaf_id(x)
 
