@@ -219,20 +219,20 @@ class SynthTree:
 
         return alpha * weighted_fraction + (1 - alpha) * avg_path
 
-        def get_models_info(self):
-            models = []
-        
-            def traverse(node):
-                if node.is_leaf:
-                    models.append({
-                        "coef": node.model.coef_,
-                        "intercept": node.model.intercept_,
-                        "n_samples": len(node.X),
-                        "feature_names": node.model.feature_names
-                    })
-                else:
-                    traverse(node.left)
-                    traverse(node.right)
-        
-            traverse(self.root)
-            return models
+    def get_models_info(self):
+        models = []
+    
+        def traverse(node):
+            if node.is_leaf:
+                models.append({
+                    "coef": node.model.coef_,
+                    "intercept": node.model.intercept_,
+                    "n_samples": len(node.X),
+                    "feature_names": node.model.feature_names
+                })
+            else:
+                traverse(node.left)
+                traverse(node.right)
+    
+        traverse(self.root)
+        return models
