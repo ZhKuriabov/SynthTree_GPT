@@ -10,6 +10,7 @@ class Node:
         self.right = None
         self.model = None
         self.prediction = None
+        self.leaf_id = None
 
     def make_leaf(self, X, M, task='regression'):
         self.is_leaf = True
