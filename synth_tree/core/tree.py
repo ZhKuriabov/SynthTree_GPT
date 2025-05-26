@@ -224,11 +224,19 @@ class SynthTree:
     
         def traverse(node):
             if node.is_leaf:
+                # Попробуем извлечь коэффициенты и смещение
+                if hasattr(node.model, "model") and hasattr(node.model.model, "coef_"):
+                    coef = node.model.model.coef_.flatten()
+                    intercept = node.model.model.intercept_
+                else:
+                    coef = np.zeros(node.X.shape[1])
+                    intercept = 0.0
+    
                 models.append({
-                    "coef": node.model.coef_,
-                    "intercept": node.model.intercept_,
+                    "coef": coef,
+                    "intercept": intercept,
                     "n_samples": len(node.X),
-                    "feature_names": node.model.feature_names
+                    "feature_names": node.model.feature_names if hasattr(node.model, "feature_names") else [f"x{i}" for i in range(coef.shape[0])]
                 })
             else:
                 traverse(node.left)
