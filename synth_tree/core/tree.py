@@ -244,3 +244,9 @@ class SynthTree:
     
         traverse(self.root)
         return models
+
+    def assign_leaf_ids(self):
+        self.root.assign_leaf_ids(counter=[0])
+    
+    def get_leaf_id(self, x):
+        return self.root.get_leaf_id(x)
