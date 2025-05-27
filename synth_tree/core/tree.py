@@ -94,20 +94,26 @@ class SynthTree:
         return np.array([self.root.predict(x, proba=proba) for x in X])
         
     def visualize_graphviz(self, feature_names=None, leaf_sizes_test=None):
+        import graphviz as gp
+        import numpy as np
     
-        dot = gp.Digraph(graph_attr={"bgcolor": "white"})  # белый фон — опционально
+        dot = gp.Digraph(graph_attr={"bgcolor": "white"})
     
-        # определить максимальный размер (для нормализации цвета)
         max_size = max(leaf_sizes_test.values()) if leaf_sizes_test else 1
     
         def _add_nodes_edges(node, parent=None, label=""):
             if node.is_leaf:
                 name = f"Leaf_{node.leaf_id}"
-                base_label = f"Leaf {node.leaf_id}"
                 size = leaf_sizes_test.get(node.leaf_id, 0) if leaf_sizes_test else 0
-                green = int(255 * size / max_size) if max_size > 0 else 0
-                fill = f"#{0:02x}{green:02x}{0:02x}"
-                label = f"{base_label}\nsize={size}"
+    
+                # Цвет топлёного молока: base RGB = (251, 238, 193)
+                base_rgb = np.array([251, 238, 193])
+                factor = size / max_size if max_size > 0 else 0
+                darkened = (base_rgb * (1 - 0.3 * factor)).astype(int)  # затемнение до 30%
+                r, g, b = np.clip(darkened, 0, 255)
+                fill = f"#{r:02x}{g:02x}{b:02x}"
+    
+                label = f"Лист {node.leaf_id}\n📦 Объектов: {size}"
                 dot.node(name, label=label, shape="box", style="filled", fillcolor=fill)
             else:
                 name = f"Node_{id(node)}"
