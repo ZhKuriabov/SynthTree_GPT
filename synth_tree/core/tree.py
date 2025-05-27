@@ -102,11 +102,11 @@ class SynthTree:
     
         def _add_nodes_edges(node, parent=None, label=""):
             if node.is_leaf:
-                name = f"Leaf_{id(node)}"
-                base_label = f"Leaf {getattr(node, 'leaf_id', '?')}"
+                name = f"Leaf_{node.leaf_id}"
+                base_label = f"Leaf {node.leaf_id}"
                 size = leaf_sizes_test.get(node.leaf_id, 0) if leaf_sizes_test else 0
                 green = int(255 * size / max_size) if max_size > 0 else 0
-                fill = f"#{0:02x}{green:02x}{0:02x}"  # RGB (0, green, 0)
+                fill = f"#{0:02x}{green:02x}{0:02x}"
                 label = f"{base_label}\nsize={size}"
                 dot.node(name, label=label, shape="box", style="filled", fillcolor=fill)
             else:
